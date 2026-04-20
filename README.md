@@ -1,6 +1,6 @@
 # 🏥 Vaccination Centers — Health Worker Portal
 
-Part of the [Vaccination Management System](https://github.com/your-org/vaccination-project).
+Part of the [Vaccination Management System](https://github.com/IstiakAdil14/automating-the-vaccination-process-hackathon-project-centers).
 
 Runs on **port 3002** locally. Used by vaccination center staff to manage slots, record vaccinations, handle walk-ins, and monitor inventory.
 
