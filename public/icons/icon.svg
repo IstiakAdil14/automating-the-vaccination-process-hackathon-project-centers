@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <!-- Background -->
+  <rect width="512" height="512" rx="96" fill="#0f172a"/>
+  <!-- Syringe body -->
+  <g transform="translate(256,256) rotate(-45) translate(-256,-256)">
+    <!-- Barrel -->
+    <rect x="176" y="220" width="160" height="72" rx="12" fill="#3b82f6"/>
+    <!-- Plunger rod -->
+    <rect x="336" y="248" width="60" height="16" rx="4" fill="#93c5fd"/>
+    <!-- Plunger cap -->
+    <rect x="390" y="236" width="16" height="40" rx="4" fill="#60a5fa"/>
+    <!-- Needle hub -->
+    <rect x="156" y="232" width="24" height="48" rx="4" fill="#1d4ed8"/>
+    <!-- Needle -->
+    <rect x="116" y="250" width="44" height="12" rx="3" fill="#bfdbfe"/>
+    <!-- Graduation marks -->
+    <rect x="210" y="220" width="4" height="16" rx="1" fill="#1e40af"/>
+    <rect x="240" y="220" width="4" height="16" rx="1" fill="#1e40af"/>
+    <rect x="270" y="220" width="4" height="16" rx="1" fill="#1e40af"/>
+    <rect x="300" y="220" width="4" height="16" rx="1" fill="#1e40af"/>
+    <!-- Fluid fill -->
+    <rect x="180" y="224" width="80" height="64" rx="8" fill="#2563eb" opacity="0.6"/>
+  </g>
+</svg>

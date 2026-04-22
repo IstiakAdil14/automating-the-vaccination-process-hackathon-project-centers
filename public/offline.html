@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Offline — VaccinationBD Centers</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      background: #0f172a;
+      color: #f1f5f9;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+    .card {
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 16px;
+      padding: 40px;
+      max-width: 420px;
+      width: 100%;
+      text-align: center;
+    }
+    .icon { font-size: 48px; margin-bottom: 16px; }
+    h1 { font-size: 20px; font-weight: 700; margin-bottom: 8px; }
+    p { font-size: 14px; color: #94a3b8; line-height: 1.6; margin-bottom: 24px; }
+    .badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: #f59e0b22; color: #f59e0b;
+      border: 1px solid #f59e0b44;
+      border-radius: 999px; padding: 6px 14px;
+      font-size: 13px; font-weight: 600;
+      animation: pulse 2s ease-in-out infinite;
+    }
+    .dot { width: 8px; height: 8px; border-radius: 50%; background: #f59e0b; }
+    button {
+      margin-top: 20px; width: 100%;
+      background: #3b82f6; color: #fff;
+      border: none; border-radius: 10px;
+      padding: 12px; font-size: 14px; font-weight: 600;
+      cursor: pointer; transition: opacity 0.2s;
+    }
+    button:hover { opacity: 0.85; }
+    @keyframes pulse { 0%,100% { opacity:1 } 50% { opacity:0.5 } }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="icon">📡</div>
+    <h1>You're Offline</h1>
+    <p>
+      VaccinationBD Centers is running in offline mode.<br />
+      Vaccination records you create will be saved locally and synced automatically when your connection is restored.
+    </p>
+    <div class="badge">
+      <span class="dot"></span>
+      Offline — records saved locally
+    </div>
+    <button onclick="window.location.reload()">Try Again</button>
+  </div>
+</body>
+</html>
