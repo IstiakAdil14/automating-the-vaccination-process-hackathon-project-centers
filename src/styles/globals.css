@@ -1,6 +1,126 @@
 @import "tailwindcss";
 
+@theme {
+  --color-border: var(--border);
+  --color-input: var(--border);
+  --color-ring: var(--accent);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+
+  --color-primary: #1D9E75;
+  --color-primary-hover: #178a64;
+  --color-primary-foreground: #ffffff;
+  --color-primary-subtle: #e6f7f2;
+  --color-primary-50: #e6f7f2;
+  --color-primary-100: #b3e8d8;
+  --color-primary-500: #1D9E75;
+  --color-primary-600: #178a64;
+
+  --color-destructive: #E24B4A;
+  --color-destructive-foreground: #ffffff;
+
+  --color-danger: #E24B4A;
+  --color-danger-hover: #cc3a39;
+  --color-danger-foreground: #ffffff;
+  --color-danger-subtle: #fdeaea;
+
+  --color-warning: #EF9F27;
+  --color-warning-foreground: #7c4a00;
+  --color-warning-subtle: #fef6e8;
+
+  --color-success: #639922;
+  --color-success-foreground: #ffffff;
+  --color-success-subtle: #eef6e2;
+
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-accent-subtle: var(--accent-subtle);
+  --color-accent-foreground: var(--accent-foreground);
+
+  --color-card: var(--surface);
+  --color-card-foreground: var(--foreground);
+
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+
+  --color-sidebar-bg: var(--sidebar-bg);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-text: var(--sidebar-text);
+  --color-sidebar-muted: var(--sidebar-text-muted);
+  --color-sidebar-active: var(--sidebar-active-text);
+  --color-sidebar-active-bg: var(--sidebar-active-bg);
+  --color-sidebar-hover: var(--sidebar-hover-bg);
+
+  --color-navy-50: var(--navy-50);
+  --color-navy-100: var(--navy-100);
+  --color-navy-200: var(--navy-200);
+  --color-navy-300: var(--navy-300);
+  --color-navy-400: var(--navy-400);
+  --color-navy-500: var(--navy-500);
+  --color-navy-600: var(--navy-600);
+  --color-navy-700: var(--navy-700);
+  --color-navy-800: var(--navy-800);
+  --color-navy-900: var(--navy-900);
+  --color-navy-950: var(--navy-950);
+
+  --color-health-green-50: var(--health-green-50);
+  --color-health-green-100: var(--health-green-100);
+  --color-health-green-300: var(--health-green-300);
+  --color-health-green-400: var(--health-green-400);
+  --color-health-green-500: var(--health-green-500);
+  --color-health-green-600: var(--health-green-600);
+  --color-health-green-700: var(--health-green-700);
+  --color-health-green-800: var(--health-green-800);
+  --color-health-green-900: var(--health-green-900);
+
+  --radius-sm: 0.25rem;
+  --radius: 0.375rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+  --radius-2xl: 1.5rem;
+  --radius-full: 9999px;
+
+  --font-sans: var(--font-sans-var), system-ui, sans-serif;
+  --font-mono: var(--font-mono-var), monospace;
+
+  --spacing-sidebar: 16rem;
+  --spacing-sidebar-collapsed: 4.5rem;
+  --spacing-topbar: 4rem;
+
+  --animate-fade-up: fadeUp 0.4s ease forwards;
+  --animate-fade-in: fadeIn 0.3s ease forwards;
+  --animate-scale-in: scaleIn 0.2s ease forwards;
+  --animate-shimmer: shimmer 1.5s infinite;
+  --animate-pulse-slow: pulseSlow 2s ease-in-out infinite;
+}
+
+@keyframes fadeUp {
+  from { transform: translateY(16px); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes scaleIn {
+  from { transform: scale(0.95); opacity: 0; }
+  to   { transform: scale(1);    opacity: 1; }
+}
+@keyframes shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position:  200% 0; }
+}
+@keyframes pulseSlow {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.4; }
+}
+
 :root {
+  color-scheme: light;
   /* Colors */
   --background: #f8fafc;
   --foreground: #0f172a;
@@ -77,6 +197,7 @@
 }
 
 [data-theme="dark"] {
+  color-scheme: dark;
   --background: #0f172a;
   --foreground: #f1f5f9;
   --surface: #1e293b;
@@ -91,4 +212,5 @@
 }
 
 * { box-sizing: border-box; }
+*, *::before, *::after { border-width: 0; border-style: solid; border-color: var(--border); }
 body { background-color: var(--background); color: var(--foreground); }

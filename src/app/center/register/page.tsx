@@ -8,8 +8,8 @@ import { z } from "zod";
 import { motion, AnimatePresence } from "framer-motion";
 import { GoogleMap, useJsApiLoader, Marker } from "@react-google-maps/api";
 import {
-  Building2, MapPin, Phone, Clock, FileText,
-  ChevronRight, ChevronLeft, Syringe, Upload, X, CheckCircle2,
+  Building2, MapPin, Phone, Clock, FileText, KeyRound,
+  ChevronRight, ChevronLeft, Syringe, Upload, X, CheckCircle2, Eye, EyeOff,
 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
@@ -81,15 +81,25 @@ const step5Schema = z.object({
   officerNidUrl: z.string().min(1, "Upload officer NID"),
 });
 
+const step6BaseSchema = z.object({
+  password: z.string().min(8, "Password must be at least 8 characters"),
+  confirmPassword: z.string().min(1, "Please confirm your password"),
+});
+
 const fullSchema = step1Schema
   .merge(step2Schema)
   .merge(step3Schema)
   .merge(step4Schema)
-  .merge(step5Schema);
+  .merge(step5Schema)
+  .merge(step6BaseSchema)
+  .refine((d) => d.password === d.confirmPassword, {
+    message: "Passwords do not match",
+    path: ["confirmPassword"],
+  });
 
 type FormData = z.infer<typeof fullSchema>;
 
-const stepSchemas = [step1Schema, step2Schema, step3Schema, step4Schema, step5Schema];
+const stepSchemas = [step1Schema, step2Schema, step3Schema, step4Schema, step5Schema, step6BaseSchema];
 
 // ── Default schedule ──────────────────────────────────────────────────────────
 const defaultSchedule = Object.fromEntries(
@@ -103,6 +113,7 @@ const STEPS = [
   { label: "Contact", icon: Phone },
   { label: "Hours", icon: Clock },
   { label: "Documents", icon: FileText },
+  { label: "Password", icon: KeyRound },
 ];
 
 // ── Field wrapper ─────────────────────────────────────────────────────────────
@@ -461,30 +472,55 @@ function FileUploadSlot({
 function Step5() {
   return (
     <div className="space-y-5">
-      <FileUploadSlot
-        label="Facility License"
-        hint="PDF or JPG — max 5MB"
-        field="facilityLicenseUrl"
-        accept=".pdf,.jpg,.jpeg"
-      />
-      <FileUploadSlot
-        label="Center Photo"
-        hint="JPG — exterior or main hall — max 5MB"
-        field="centerPhotoUrl"
-        accept=".jpg,.jpeg"
-      />
-      <FileUploadSlot
-        label="Officer NID"
-        hint="JPG of the primary contact's National ID — max 5MB"
-        field="officerNidUrl"
-        accept=".jpg,.jpeg"
-      />
+      <FileUploadSlot label="Facility License" hint="PDF or JPG — max 5MB" field="facilityLicenseUrl" accept=".pdf,.jpg,.jpeg" />
+      <FileUploadSlot label="Center Photo" hint="JPG — exterior or main hall — max 5MB" field="centerPhotoUrl" accept=".jpg,.jpeg" />
+      <FileUploadSlot label="Officer NID" hint="JPG of the primary contact's National ID — max 5MB" field="officerNidUrl" accept=".jpg,.jpeg" />
+    </div>
+  );
+}
+
+// ── Step 6: Password Setup ────────────────────────────────────────────────────
+function Step6() {
+  const { register, formState: { errors } } = useFormContext<FormData>();
+  const [showPass, setShowPass] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
+  return (
+    <div className="space-y-5">
+      <div className="rounded-lg border border-border bg-accent-subtle/40 px-4 py-3 text-sm text-accent-foreground">
+        Set a secure password to log in to the center portal after your application is approved.
+      </div>
+      <Field label="Password" error={errors.password?.message}>
+        <div className="relative">
+          <Input
+            type={showPass ? "text" : "password"}
+            error={!!errors.password}
+            placeholder="Min. 8 characters"
+            {...register("password")}
+          />
+          <button type="button" onClick={() => setShowPass((s) => !s)} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
+            {showPass ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+          </button>
+        </div>
+      </Field>
+      <Field label="Confirm Password" error={errors.confirmPassword?.message}>
+        <div className="relative">
+          <Input
+            type={showConfirm ? "text" : "password"}
+            error={!!errors.confirmPassword}
+            placeholder="Re-enter password"
+            {...register("confirmPassword")}
+          />
+          <button type="button" onClick={() => setShowConfirm((s) => !s)} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
+            {showConfirm ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+          </button>
+        </div>
+      </Field>
     </div>
   );
 }
 
 // ── Step components map ───────────────────────────────────────────────────────
-const STEP_COMPONENTS = [Step1, Step2, Step3, Step4, Step5];
+const STEP_COMPONENTS = [Step1, Step2, Step3, Step4, Step5, Step6];
 
 // ── Main wizard ───────────────────────────────────────────────────────────────
 export default function CenterRegisterPage() {
@@ -501,7 +537,7 @@ export default function CenterRegisterPage() {
       division: "", district: "", localBodyType: undefined, upazila: "", address: "", geoLat: undefined as number | undefined, geoLng: undefined as number | undefined,
       contactName: "", designation: "", phone: "", email: "",
       schedule: defaultSchedule,
-      facilityLicenseUrl: "", centerPhotoUrl: "", officerNidUrl: "",
+      facilityLicenseUrl: "", centerPhotoUrl: "", officerNidUrl: "", password: "", confirmPassword: "",
     },
   });
 
@@ -510,6 +546,7 @@ export default function CenterRegisterPage() {
   async function goNext() {
     const fields = Object.keys(stepSchemas[step].shape) as (keyof FormData)[];
     // step 4 uses nested schedule — trigger all
+    // step 6 (password) needs cross-field confirmPassword check via full schema
     const valid = step === 3 ? await trigger("schedule") : await trigger(fields);
     if (!valid) return;
     setDirection(1);

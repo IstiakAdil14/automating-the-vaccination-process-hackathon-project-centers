@@ -1,7 +1,3 @@
-// proxy.ts
-// Edge-compatible proxy — uses authConfig only (no Mongoose/Node APIs).
-// Protects all routes, enforces RBAC, and logs auth events to the audit system.
-
 import NextAuth from "next-auth";
 import { authConfig, MANAGER_ONLY_ROUTES, PUBLIC_ROUTES } from "@/lib/auth/auth.config";
 import { NextResponse } from "next/server";
@@ -9,12 +5,7 @@ import type { NextRequest } from "next/server";
 
 const { auth } = NextAuth(authConfig);
 
-// ── Lightweight edge-safe audit write (no Mongoose) ──────────────────────────
-function fireAuthAudit(
-  req: NextRequest,
-  action: string,
-  metadata: Record<string, unknown>
-): void {
+function fireAuthAudit(req: NextRequest, action: string, metadata: Record<string, unknown>): void {
   const url = new URL("/api/worker/audit/auth-event", req.url);
   fetch(url.toString(), {
     method: "POST",
@@ -37,7 +28,8 @@ export default auth(function proxy(
   const isLoggedIn = !!session?.user;
 
   if (PUBLIC_ROUTES.some((r) => pathname.startsWith(r))) {
-    if (isLoggedIn) return NextResponse.redirect(new URL("/dashboard", req.url));
+    if (isLoggedIn && (pathname.startsWith("/login") || pathname.startsWith("/register")))
+      return NextResponse.redirect(new URL("/worker/dashboard", req.url));
     return NextResponse.next();
   }
 
@@ -53,7 +45,7 @@ export default auth(function proxy(
 
   if (MANAGER_ONLY_ROUTES.some((r) => pathname.startsWith(r))) {
     if (session?.user?.role !== "center_manager") {
-      return NextResponse.redirect(new URL("/dashboard", req.url));
+      return NextResponse.redirect(new URL("/worker/dashboard", req.url));
     }
   }
 
@@ -61,5 +53,5 @@ export default auth(function proxy(
 });
 
 export const config = {
-  matcher: ["/((?!_next/static|_next/image|favicon.ico|sw\.js|manifest\.json|offline\.html|icons/|screenshots/|public/|api/worker/audit/|api/center/).*)" ],
+  matcher: ["/((?!_next/static|_next/image|favicon.ico|sw\\.js|manifest\\.json|offline\\.html|icons/|screenshots/|public/|api/).*)"],
 };

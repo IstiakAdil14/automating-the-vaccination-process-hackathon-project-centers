@@ -21,6 +21,7 @@ export function CenterInfoEditor({ onPhotoChange }: Props) {
     fetch("/api/worker/settings/center")
       .then((r) => r.json())
       .then((d) => {
+        if (!d.center) return;
         setInfo(d.center);
         setForm({
           name:    d.center.name    ?? "",
@@ -36,7 +37,7 @@ export function CenterInfoEditor({ onPhotoChange }: Props) {
     const res = await fetch("/api/worker/settings/center", {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(form),
+      body: JSON.stringify({ centerName: form.name, phone: form.phone, email: form.email, address: form.address }),
     });
     setMsg(res.ok ? "Saved successfully" : "Save failed");
     setSaving(false);

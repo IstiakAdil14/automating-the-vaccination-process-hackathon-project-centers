@@ -10,12 +10,10 @@ export interface IDaySchedule {
 
 export interface ICenterApplication extends Document {
   referenceNumber: string;
-  // Step 1
   centerName: string;
   licenseNumber: string;
   centerType: string;
   establishedYear: number;
-  // Step 2
   division: string;
   district: string;
   localBodyType: "Upazila" | "City Corporation" | "Pourashava";
@@ -23,18 +21,17 @@ export interface ICenterApplication extends Document {
   address: string;
   geoLat?: number;
   geoLng?: number;
-  // Step 3
   contactName: string;
   designation: string;
   phone: string;
   email: string;
-  // Step 4
-  schedule: Record<string, IDaySchedule>;
-  // Step 5
+  schedule?: Record<string, IDaySchedule>;
   facilityLicenseUrl: string;
   centerPhotoUrl: string;
   officerNidUrl: string;
-  // Meta
+  hashedPassword?: string;
+  capacity?: number;
+  vaccines?: string[];
   status: "pending_review" | "approved" | "rejected";
   createdAt: Date;
   updatedAt: Date;
@@ -73,6 +70,9 @@ const CenterApplicationSchema = new Schema<ICenterApplication>(
     facilityLicenseUrl: { type: String, required: true },
     centerPhotoUrl: { type: String, required: true },
     officerNidUrl: { type: String, required: true },
+    hashedPassword: { type: String },
+    capacity: { type: Number },
+    vaccines: { type: [String] },
     status: {
       type: String,
       enum: ["pending_review", "approved", "rejected"],

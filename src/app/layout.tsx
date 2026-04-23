@@ -1,14 +1,14 @@
 import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
-import "@/styles/globals.css";
+import "../styles/globals.css";
 import { Toaster } from "sonner";
 import { ServiceWorkerRegistrar } from "@/components/shared/ServiceWorkerRegistrar";
 
-const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
+const inter = Inter({ subsets: ["latin"], variable: "--font-sans-var" });
 
 export const viewport: Viewport = {
   themeColor:        "#3b82f6",
-  colorScheme:       "dark",
+  colorScheme:       "light dark",
   width:             "device-width",
   initialScale:      1,
   minimumScale:      1,
@@ -53,7 +53,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${inter.variable} font-sans antialiased`}>
+      <body className={`${inter.variable} font-sans antialiased overflow-x-hidden`}>
         {/* Registers sw.js, Background Sync tags, and handles SW messages */}
         <ServiceWorkerRegistrar />
         {children}

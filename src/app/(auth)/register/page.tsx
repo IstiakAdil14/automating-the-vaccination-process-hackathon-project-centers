@@ -6,7 +6,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Syringe, CheckCircle2, ChevronRight, ChevronLeft, AlertCircle } from "lucide-react";
+import { Syringe, CheckCircle2, ChevronRight, ChevronLeft, AlertCircle, Eye, EyeOff } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
@@ -48,13 +48,22 @@ const step5Schema = z.object({
   officerNidUrl: z.string().url("Enter a valid URL"),
 });
 
+const step6Schema = z.object({
+  password: z.string().min(8, "Password must be at least 8 characters"),
+  confirmPassword: z.string().min(1, "Please confirm your password"),
+}).refine((d) => d.password === d.confirmPassword, {
+  message: "Passwords do not match",
+  path: ["confirmPassword"],
+});
+
 type Step1 = z.infer<typeof step1Schema>;
 type Step2 = z.infer<typeof step2Schema>;
 type Step3 = z.infer<typeof step3Schema>;
 type Step4 = z.infer<typeof step4Schema>;
 type Step5 = z.infer<typeof step5Schema>;
+type Step6 = z.infer<typeof step6Schema>;
 
-const STEPS = ["Center Info", "Location", "Contact", "Services", "Documents"];
+const STEPS = ["Center Info", "Location", "Contact", "Services", "Documents", "Password"];
 
 const CENTER_TYPES = ["Government", "Private", "NGO", "Military", "Community"];
 const DIVISIONS = ["Dhaka", "Chittagong", "Rajshahi", "Khulna", "Barisal", "Sylhet", "Rangpur", "Mymensingh"];
@@ -166,7 +175,9 @@ export default function RegisterPage() {
   const [refNumber, setRefNumber] = useState<string | null>(null);
 
   // Accumulated form data across steps
-  const [formData, setFormData] = useState<Partial<Step1 & Step2 & Step3 & Step4 & Step5>>({});
+  const [formData, setFormData] = useState<Partial<Step1 & Step2 & Step3 & Step4 & Step5 & Step6>>({});
+  const [showPass, setShowPass] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
 
   // Per-step forms
   const form1 = useForm<Step1>({ resolver: zodResolver(step1Schema), defaultValues: formData });
@@ -174,8 +185,9 @@ export default function RegisterPage() {
   const form3 = useForm<Step3>({ resolver: zodResolver(step3Schema), defaultValues: formData });
   const form4 = useForm<Step4>({ resolver: zodResolver(step4Schema), defaultValues: { vaccines: [], ...formData } });
   const form5 = useForm<Step5>({ resolver: zodResolver(step5Schema), defaultValues: formData });
+  const form6 = useForm<Step6>({ resolver: zodResolver(step6Schema), defaultValues: { password: "", confirmPassword: "" } });
 
-  const forms = [form1, form2, form3, form4, form5];
+  const forms = [form1, form2, form3, form4, form5, form6];
 
   async function handleNext() {
     const currentForm = forms[step];
@@ -187,9 +199,9 @@ export default function RegisterPage() {
   }
 
   async function handleSubmit() {
-    const valid = await form5.trigger();
+    const valid = await form6.trigger();
     if (!valid) return;
-    const finalData = { ...formData, ...form5.getValues() };
+    const finalData = { ...formData, ...form6.getValues() };
     setSubmitting(true);
     setServerError(null);
     try {
@@ -396,6 +408,41 @@ export default function RegisterPage() {
                 </Field>
               </>
             )}
+
+            {/* Step 6 — Password */}
+            {step === 5 && (
+              <>
+                <p className="text-xs text-muted-foreground">
+                  Set a password to log in to the center portal after your application is approved.
+                </p>
+                <Field label="Password" error={form6.formState.errors.password?.message}>
+                  <div className="relative">
+                    <Input
+                      type={showPass ? "text" : "password"}
+                      placeholder="Min. 8 characters"
+                      {...form6.register("password")}
+                      error={!!form6.formState.errors.password}
+                    />
+                    <button type="button" onClick={() => setShowPass((s) => !s)} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
+                      {showPass ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    </button>
+                  </div>
+                </Field>
+                <Field label="Confirm Password" error={form6.formState.errors.confirmPassword?.message}>
+                  <div className="relative">
+                    <Input
+                      type={showConfirm ? "text" : "password"}
+                      placeholder="Re-enter password"
+                      {...form6.register("confirmPassword")}
+                      error={!!form6.formState.errors.confirmPassword}
+                    />
+                    <button type="button" onClick={() => setShowConfirm((s) => !s)} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
+                      {showConfirm ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    </button>
+                  </div>
+                </Field>
+              </>
+            )}
           </motion.div>
         </AnimatePresence>
 
@@ -406,7 +453,7 @@ export default function RegisterPage() {
               <ChevronLeft className="w-4 h-4" /> Back
             </Button>
           )}
-          {step < 4 ? (
+          {step < 5 ? (
             <Button type="button" size="lg" className="flex-1" onClick={handleNext}>
               Next <ChevronRight className="w-4 h-4" />
             </Button>

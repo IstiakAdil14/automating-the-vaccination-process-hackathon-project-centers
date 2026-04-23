@@ -36,7 +36,7 @@ export function LayoutShell({ children, user, centerName, centerStatus, openFrau
       {/* Main content — shifts right based on sidebar width */}
       <motion.div
         animate={{ paddingLeft: mounted ? (collapsed ? "4.5rem" : "16rem") : "16rem" }}
-        transition={{ type: "spring", stiffness: 320, damping: 30 }}
+        transition={{ type: "tween", duration: 0.22, ease: "easeInOut" }}
         // On mobile the sidebar is a bottom tab bar, so no left padding
         className="md:block flex flex-col min-h-screen pb-16 md:pb-0"
       >

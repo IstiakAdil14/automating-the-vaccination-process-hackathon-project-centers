@@ -1,4 +1,5 @@
-// Route: /dashboard — Center overview: today's stats, queue summary, inventory alerts
+import { redirect } from "next/navigation";
+
 export default function DashboardPage() {
-  return <div>Dashboard Page</div>;
+  redirect("/worker/dashboard");
 }

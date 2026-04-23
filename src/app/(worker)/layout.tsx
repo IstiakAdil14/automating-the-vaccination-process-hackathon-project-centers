@@ -5,9 +5,10 @@
 
 import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth/auth";
-import { connectDB, Center, FraudAlert } from "@/lib/db";
+import { connectDB, CenterApplication, FraudAlert } from "@/lib/db";
 import { LayoutShell } from "@/components/shared/LayoutShell";
 import { SyncWorker } from "@/components/features/record-vaccination/SyncWorker";
+import mongoose from "mongoose";
 
 export default async function WorkerLayout({ children }: { children: React.ReactNode }) {
   const session = await auth();
@@ -15,14 +16,12 @@ export default async function WorkerLayout({ children }: { children: React.React
 
   await connectDB();
 
-  const [center, openFraudCount] = await Promise.all([
-    Center.findById(session.user.centerId)
-      .select("name status")
-      .lean(),
-    FraudAlert.countDocuments({
-      centerId: session.user.centerId,
-      status: "open",
-    }),
+  const [appDoc, openFraudCount] = await Promise.all([
+    CenterApplication.collection.findOne(
+      { _id: new mongoose.Types.ObjectId(session.user.centerId) },
+      { projection: { centerName: 1, status: 1 } }
+    ),
+    FraudAlert.countDocuments({ centerId: session.user.centerId, status: "open" }),
   ]);
 
   return (
@@ -34,11 +33,10 @@ export default async function WorkerLayout({ children }: { children: React.React
         role:     session.user.role,
         centerId: session.user.centerId,
       }}
-      centerName={center?.name ?? "Your Center"}
-      centerStatus={(center?.status as "active" | "suspended" | "closed") ?? "active"}
+      centerName={appDoc?.centerName ?? "Your Center"}
+      centerStatus="active"
       openFraudCount={openFraudCount}
     >
-      {/* Background sync engine — mounts once for the whole portal */}
       <SyncWorker />
       {children}
     </LayoutShell>

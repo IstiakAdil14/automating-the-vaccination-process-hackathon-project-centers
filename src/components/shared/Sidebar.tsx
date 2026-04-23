@@ -69,7 +69,7 @@ function NavItem({
           layoutId="sidebar-active-pill"
           className="absolute inset-0 rounded-lg bg-sidebar-active-bg"
           style={{ zIndex: -1 }}
-          transition={{ type: "spring", stiffness: 380, damping: 32 }}
+          transition={{ type: "tween", duration: 0.18, ease: "easeInOut" }}
         />
       )}
       <Icon className="w-4 h-4 shrink-0" />
@@ -122,7 +122,7 @@ export function Sidebar({ userName, userRole, centerName, centerStatus }: Props)
       {/* ── Desktop sidebar ─────────────────────────────────────────────── */}
       <motion.aside
         animate={{ width: collapsed ? "4.5rem" : "16rem" }}
-        transition={{ type: "spring", stiffness: 320, damping: 30 }}
+        transition={{ type: "tween", duration: 0.22, ease: "easeInOut" }}
         className="hidden md:flex fixed inset-y-0 left-0 flex-col bg-sidebar-bg border-r border-sidebar-border z-30 overflow-hidden"
       >
         {/* Logo */}
@@ -232,16 +232,23 @@ export function Sidebar({ userName, userRole, centerName, centerStatus }: Props)
             )}
           </Tooltip.Root>
         </div>
+      </motion.aside>
 
-        {/* Collapse toggle */}
+      {/* Collapse toggle — outside aside so it never gets clipped by overflow-hidden */}
+      <motion.div
+        className="hidden md:block fixed z-40"
+        style={{ top: "4.5rem" }}
+        animate={{ left: collapsed ? "calc(4.5rem - 0.75rem)" : "calc(16rem - 0.75rem)" }}
+        transition={{ type: "tween", duration: 0.22, ease: "easeInOut" }}
+      >
         <button
           onClick={toggle}
-          className="absolute top-[4.5rem] -right-3 w-6 h-6 rounded-full bg-sidebar-bg border border-sidebar-border flex items-center justify-center text-sidebar-muted hover:text-white transition-colors z-10"
+          className="w-6 h-6 rounded-full bg-sidebar-bg border border-sidebar-border flex items-center justify-center text-sidebar-muted hover:text-white transition-colors"
           aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
         >
           {collapsed ? <ChevronRight className="w-3 h-3" /> : <ChevronLeft className="w-3 h-3" />}
         </button>
-      </motion.aside>
+      </motion.div>
 
       {/* ── Mobile bottom tab bar ────────────────────────────────────────── */}
       <nav className="md:hidden fixed bottom-0 inset-x-0 z-30 bg-sidebar-bg border-t border-sidebar-border flex">
